@@ -21,7 +21,7 @@ class CpfModel {
     result = result * 10;
     final digit = result % 11;
 
-    return digit;
+    return digit == 10 ? 0 : digit;
   }
 
   bool _checkDigits(List<int> cpfNumbers, int digit1, int digit2) {

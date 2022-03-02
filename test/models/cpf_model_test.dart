@@ -1,6 +1,5 @@
-import 'package:cpf_generator/models/cpf_model.dart';
 import 'package:cpf_generator/utils/cpf_generator.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   /// 747.123.830-54 valid
@@ -14,7 +13,7 @@ void main() {
 
   final cpfGenerator = CpfGenerator();
   final generatedCpfModel = cpfGenerator.generateCpf();
-  print(generatedCpfModel.value);
+  debugPrint(generatedCpfModel.value);
   final genResult = generatedCpfModel.validate();
-  print(genResult);
+  debugPrint(genResult.toString());
 }

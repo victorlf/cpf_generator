@@ -1,9 +1,9 @@
 import 'package:cpf_generator/stores/home_store.dart';
+import 'package:cpf_generator/utils/cpf_mask.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -11,17 +11,29 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final cpfStore = CpfStore();
+  late TextEditingController controller;
+
+  void genetateCpf(TextEditingController controller) {
+    cpfStore.genetateCpf(controller);
+  }
+
+  void validateCpf(TextEditingController controller) {
+    cpfStore.validateCpf(controller);
+  }
 
   @override
   void initState() {
     super.initState();
+    controller = TextEditingController();
     cpfStore.addListener(() {
       setState(() {});
     });
   }
 
-  void _incrementCounter() {
-    cpfStore.add();
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -35,59 +47,46 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(
+              cpfStore.validationMessage,
+              style: TextStyle(
+                color: cpfStore.messageColor,
+                fontSize: 20.0,
+              ),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
             TextFormField(
+              controller: controller,
               inputFormatters: [CpfMask()],
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'CPF',
               ),
-              validator: (value) {
-                /// TODO: Valiate the text in realtime, so the
-                /// validation button is only enabled when the
-                /// CPF field is completely filled
-              },
-            )
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    genetateCpf(controller);
+                  },
+                  child: const Text('Generate CPF'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    validateCpf(controller);
+                  },
+                  child: const Text('Validate CPF'),
+                )
+              ],
+            ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-class CpfMask implements TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    if (newValue.text.length > 14 ||
-        !RegExp(r'^([\d-.]+)?$').hasMatch(newValue.text)) {
-      return oldValue;
-    }
-
-    var cpf = newValue.text.replaceAll(RegExp(r'\D'), '');
-    final characteres = cpf.characters.toList();
-    var formattedCpf = '';
-
-    for (var i = 0; i < characteres.length; i++) {
-      if (i == 3 || i == 6) {
-        formattedCpf += '.';
-        formattedCpf += characteres[i];
-      } else if (i == 9) {
-        formattedCpf += '-';
-        formattedCpf += characteres[i];
-      } else {
-        formattedCpf += characteres[i];
-      }
-    }
-
-    return newValue.copyWith(
-      text: formattedCpf,
-      selection: TextSelection.fromPosition(
-        TextPosition(offset: formattedCpf.length),
       ),
     );
   }

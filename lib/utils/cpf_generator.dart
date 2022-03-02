@@ -6,7 +6,6 @@ class CpfGenerator {
   List<dynamic> _generateFirst9Digits() {
     final number = RandomNumber().nextInter(100000000, 999999999).toString();
     final numbersStringList = number.split('');
-    debugPrint(number);
     return [number, numbersStringList];
   }
 
@@ -28,10 +27,14 @@ class CpfGenerator {
     result = result * 10;
     final digit = result % 11;
 
-    return digit;
+    debugPrint(result.toString());
+    debugPrint(digit.toString());
+
+    return digit == 10 ? 0 : digit;
   }
 
   CpfModel generateCpf() {
+    debugPrint('========');
     var numberAndList = _generateFirst9Digits();
     String number = numberAndList[0];
     List<String> numbersStringList = numberAndList[1];
@@ -39,7 +42,7 @@ class CpfGenerator {
       numberAndList = _generateFirst9Digits();
       number = numberAndList[0];
       numbersStringList = numberAndList[1];
-      debugPrint('got intp here');
+      debugPrint('got into here');
     }
 
     var numbersList = numbersStringList.map((e) => int.parse(e)).toList();
@@ -55,6 +58,8 @@ class CpfGenerator {
         number.substring(6, 9);
 
     cpf = cpf + '-$digit1$digit2';
+
+    debugPrint(cpf);
 
     return CpfModel(cpf);
   }
