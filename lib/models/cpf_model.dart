@@ -1,7 +1,8 @@
 class CpfModel {
   final String value;
 
-  CpfModel(this.value);
+  CpfModel(this.value)
+      : assert(RegExp(r'^(\d{3}\.\d{3}\.\d{3}\-\d{2}?$)').hasMatch(value));
 
   String _cleanCpf() {
     var result = value.replaceAll('.', '');
